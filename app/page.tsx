@@ -1,189 +1,73 @@
 'use client';
 
-import { useState, FormEvent, useMemo } from 'react';
+import { useUser } from '@clerk/nextjs';
+import { SignUpButton } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 const ArrowUpRight = () => (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M7 17 17 7" />
-        <path d="M7 7h10v10" />
-    </svg>
-);
-
-const CheckIcon = () => (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20 6 9 17l-5-5" />
+        <path d="M7 17 17 7" /><path d="M7 7h10v10" />
     </svg>
 );
 
 export default function Home() {
-    const [url, setUrl] = useState('');
-    const [displayName, setDisplayName] = useState('');
-    const [slug, setSlug] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [result, setResult] = useState<{ slug: string; statusPageUrl: string } | null>(null);
-    const [error, setError] = useState('');
-    const baseUrl = useMemo(() => {
-        if (typeof window === 'undefined') return 'tinystatus.bolabanjo.xyz';
-        return window.location.host;
-    }, []);
+    const { user, isLoaded } = useUser();
+    const router = useRouter();
 
-    const onSubmit = async (e: FormEvent) => {
-        e.preventDefault();
-        if (!url.trim() || !displayName.trim() || loading) return;
-
-        setLoading(true);
-        setError('');
-
-        try {
-            const res = await fetch('/api/monitors', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    url: url.trim(),
-                    displayName: displayName.trim(),
-                    slug: slug.trim() || undefined,
-                }),
-            });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                setError(data.error || 'Something went wrong');
-                return;
-            }
-
-            setResult(data);
-        } catch {
-            setError('Failed to connect. Please try again.');
-        } finally {
-            setLoading(false);
+    useEffect(() => {
+        if (isLoaded && user) {
+            router.push('/dashboard');
         }
-    };
+    }, [isLoaded, user]);
 
-    const reset = () => {
-        setUrl('');
-        setDisplayName('');
-        setSlug('');
-        setResult(null);
-        setError('');
-    };
+    if (isLoaded && user) {
+        return (
+            <div className="landing">
+                <div className="landing-bg" />
+                <div className="landing-inner">
+                    <div className="loading-dots"><span /><span /><span /></div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="landing">
             <div className="landing-bg" />
-
             <div className="landing-inner">
                 <div className="brand">
                     <div className="brand-title">tinystatus</div>
                     <div className="brand-tagline">
-                        Paste a URL. Get a public status page.<br />
-                        AI explains every incident.
+                        AI-powered uptime intelligence.<br />
+                        Paste a URL. Get a public status page.
                     </div>
                 </div>
 
-                {!result ? (
-                    <div className="outer-shell">
-                        <div className="inner-core">
-                            <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                                <div className="form-group">
-                                    <label className="form-label" htmlFor="url">URL to Monitor</label>
-                                    <input
-                                        id="url"
-                                        className="form-input"
-                                        type="url"
-                                        placeholder="https://example.com"
-                                        value={url}
-                                        onChange={(e) => setUrl(e.target.value)}
-                                        required
-                                        autoFocus
-                                    />
-                                </div>
+                <div className="outer-shell">
+                    <div className="inner-core" style={{ alignItems: 'center', textAlign: 'center', gap: '1.25rem' }}>
+                        <p style={{ fontSize: '0.9rem', color: 'var(--muted)', lineHeight: 1.6 }}>
+                            Create a status page for any URL.<br />
+                            AI monitors it, detects incidents,<br />
+                            and writes summaries automatically.
+                        </p>
 
-                                <div className="form-group">
-                                    <label className="form-label" htmlFor="displayName">Display Name</label>
-                                    <input
-                                        id="displayName"
-                                        className="form-input"
-                                        type="text"
-                                        placeholder="My Website"
-                                        value={displayName}
-                                        onChange={(e) => setDisplayName(e.target.value)}
-                                        required
-                                    />
-                                </div>
+                        <SignUpButton mode="modal">
+                            <button className="btn-create" style={{ marginTop: 0 }}>
+                                Get Started
+                                <span className="btn-icon-ring"><ArrowUpRight /></span>
+                            </button>
+                        </SignUpButton>
 
-                                <div className="form-group">
-                                    <label className="form-label" htmlFor="slug">Slug (optional)</label>
-                                    <input
-                                        id="slug"
-                                        className="form-input"
-                                        type="text"
-                                        placeholder="my-website"
-                                        value={slug}
-                                        onChange={(e) => setSlug(e.target.value)}
-                                    />
-                                    <span className="form-hint">
-                                        {baseUrl}/{slug || 'your-slug'}
-                                    </span>
-                                </div>
-
-                                {error && <div className="error-banner">{error}</div>}
-
-                                <button
-                                    type="submit"
-                                    className="btn-create"
-                                    disabled={loading || !url.trim() || !displayName.trim()}
-                                >
-                                    {loading ? (
-                                        <div className="loading-dots">
-                                            <span /><span /><span />
-                                        </div>
-                                    ) : (
-                                        <>Create Status Page</>
-                                    )}
-                                    <span className="btn-icon-ring">
-                                        {loading ? <span style={{ opacity: 0.4 }}><CheckIcon /></span> : <ArrowUpRight />}
-                                    </span>
-                                </button>
-                            </form>
-                        </div>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>
+                            Free. No credit card.
+                        </p>
                     </div>
-                ) : (
-                    <div className="result-card">
-                        <div className="outer-shell">
-                            <div className="inner-core" style={{ gap: '1rem' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    <span style={{ color: 'var(--accent)' }}><CheckIcon /></span>
-                                    <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>Status page created</span>
-                                </div>
+                </div>
 
-                                <div className="result-url">
-                                    <span>{result.statusPageUrl}</span>
-                                </div>
-
-                                <div className="result-actions">
-                                    <a
-                                        href={result.statusPageUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="btn-visit"
-                                    >
-                                        View Status Page
-                                        <ArrowUpRight />
-                                    </a>
-                                    <button onClick={reset} className="btn-create-another">
-                                        Create Another
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            <div className="landing-footer">
-                Powered by{' '}
-                <a href="https://cencori.com" target="_blank" rel="noopener noreferrer">Cencori</a>
+                <div className="landing-footer">
+                    Powered by <a href="https://cencori.com" target="_blank" rel="noopener noreferrer">Cencori</a>
+                </div>
             </div>
         </div>
     );

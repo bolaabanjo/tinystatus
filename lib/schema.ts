@@ -5,6 +5,7 @@ export const monitors = pgTable('monitors', {
     url: text('url').notNull(),
     displayName: text('display_name').notNull(),
     slug: text('slug').unique().notNull(),
+    userId: text('user_id'),
     checkInterval: integer('check_interval').default(30).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
