@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useMemo } from 'react';
 
 const ArrowUpRight = () => (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -22,6 +22,10 @@ export default function Home() {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<{ slug: string; statusPageUrl: string } | null>(null);
     const [error, setError] = useState('');
+    const baseUrl = useMemo(() => {
+        if (typeof window === 'undefined') return 'tinystatus.bolabanjo.xyz';
+        return window.location.host;
+    }, []);
 
     const onSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -119,7 +123,7 @@ export default function Home() {
                                         onChange={(e) => setSlug(e.target.value)}
                                     />
                                     <span className="form-hint">
-                                        tinystatus.vercel.app/{slug || 'your-slug'}
+                                        {baseUrl}/{slug || 'your-slug'}
                                     </span>
                                 </div>
 

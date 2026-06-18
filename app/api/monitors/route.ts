@@ -31,10 +31,13 @@ export async function POST(req: Request) {
             slug,
         }).returning();
 
+        const host = req.headers.get('host') || 'tinystatus.bolabanjo.xyz';
+        const protocol = host.includes('localhost') || host.includes('127.0.0.1') ? 'http' : 'https';
+
         return Response.json({
             slug: monitor.slug,
             displayName: monitor.displayName,
-            statusPageUrl: `https://tinystatus.vercel.app/${monitor.slug}`,
+            statusPageUrl: `${protocol}://${host}/${monitor.slug}`,
         });
     } catch (err) {
         console.error('Failed to create monitor:', err);
