@@ -465,3 +465,294 @@ code {
         flex-direction: column;
     }
 }
+
+/* ── Status Page ── */
+
+.status-page {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.status-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.status-bg::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -15%;
+    width: 50%;
+    height: 50%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 212, 170, 0.05) 0%, transparent 70%);
+    animation: orb-drift 25s ease-in-out infinite alternate;
+}
+
+.status-inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 640px;
+    padding: 3rem 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Header */
+
+.status-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.status-brand {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.status-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-url {
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--foreground);
+}
+
+/* Badge */
+
+.status-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.75rem 1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: background 0.5s ease, box-shadow 0.5s ease;
+}
+
+.status-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.5s ease;
+}
+
+/* Stats */
+
+.status-stats {
+    display: flex;
+    gap: 1px;
+    background: var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.stat {
+    flex: 1;
+    background: var(--card);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.stat-value {
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Sections */
+
+.status-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.section-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+/* Sparkline */
+
+.sparkline-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.75rem;
+}
+
+.sparkline-container svg {
+    display: block;
+}
+
+.sparkline-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--muted);
+    padding: 0 0.25rem;
+}
+
+.empty-state {
+    padding: 1.5rem 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+/* Incidents */
+
+.incidents-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.incident-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.incident-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.incident-severity {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+}
+
+.incident-severity.down {
+    background: rgba(239, 68, 68, 0.15);
+    color: #ef4444;
+}
+
+.incident-severity.degraded {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+}
+
+.incident-date {
+    font-size: 0.8rem;
+    color: var(--foreground);
+    font-weight: 500;
+}
+
+.incident-duration {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-left: auto;
+}
+
+.incident-summary {
+    font-size: 0.85rem;
+    color: var(--foreground);
+    line-height: 1.5;
+}
+
+/* Footer */
+
+.status-footer {
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--muted);
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border);
+}
+
+.status-footer a {
+    color: var(--muted);
+    text-decoration: underline;
+    text-decoration-color: rgba(136, 136, 136, 0.3);
+}
+
+.status-footer a:hover {
+    color: var(--foreground);
+}
+
+/* Status Page Mobile */
+
+@media (max-width: 768px) {
+    .status-inner {
+        padding: 2rem 1rem 1.5rem;
+        gap: 1.5rem;
+    }
+
+    .status-url {
+        font-size: 1.1rem;
+    }
+
+    .status-stats {
+        flex-direction: column;
+        gap: 1px;
+    }
+
+    .stat {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 0.75rem 1rem;
+    }
+
+    .stat-value {
+        font-size: 1rem;
+    }
+
+    .incident-header {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .incident-duration {
+        margin-left: 0;
+    }
+}
